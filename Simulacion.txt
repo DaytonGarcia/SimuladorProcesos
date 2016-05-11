@@ -1,5 +1,50 @@
-Ejecucion{
-Proceso(1,2,3,4);
-Proceso(5,6,7,8);
-Proceso(9,0,1,2);
+Simulacion
+{
+	Recurso R1;
+	Recurso R2;
+	Recurso R3;
+
+	Tiempo(1)
+	{
+		Proceso(1)
+		{
+			Asignar (R1);
+		}
+		Proceso(2)
+		{
+			Asignar(R2);
+		}
+		Proceso(3)
+		{
+			Asignar(R2,R3,R4);
+		}
+	}
+	Tiempo(2)
+	{
+		Proceso(4)
+		{
+			Asignar(R1,R6);
+		}
+	}
+	Tiempo(3)
+	{
+		Proceso(1)
+		{
+			Asignar(R6);
+		}
+	}
+	Tiempo(4)
+	{
+		Proceso(3)
+		{
+			Liberar(R3);
+		}
+	}
+	Tiempo(5)
+	{
+		Proceso(3)
+		{
+			Terminar();
+		}
+	}
 }

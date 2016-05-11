@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import AnalizadorEjecucion.Proceso;
+import java.util.ArrayList;
 
 
 /**
@@ -25,6 +27,7 @@ public  class Home extends javax.swing.JFrame {
 
     public static int ram, swap;
     public static int estrategia, metodo;
+    private ArrayList<Proceso> procesos = new ArrayList<Proceso>();
     
     void AnalizarSimulacion(String path)
     {
@@ -44,6 +47,7 @@ public  class Home extends javax.swing.JFrame {
         try {
             pars=new AnalizadorEjecucion.Sintactico(new AnalizadorEjecucion.Lexico(new FileInputStream(path)));
             pars.parse(); 
+            this.procesos = pars.procesos;
             
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");
@@ -125,10 +129,10 @@ public  class Home extends javax.swing.JFrame {
         radioEstrategia2 = new javax.swing.JRadioButton();
         radioEstrategia3 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
+        rFCFS = new javax.swing.JRadioButton();
+        rSCF = new javax.swing.JRadioButton();
+        rPrioridad = new javax.swing.JRadioButton();
+        rRoudRobin = new javax.swing.JRadioButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtEjecucion = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
@@ -140,8 +144,15 @@ public  class Home extends javax.swing.JFrame {
         txtSWAP2 = new javax.swing.JTextField();
         txtRAM = new javax.swing.JTextField();
         txtRAM2 = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Simulador De Procesos ");
+        setIconImages(null);
 
         jTabbedPane2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -203,24 +214,43 @@ public  class Home extends javax.swing.JFrame {
                         .addComponent(radioEstrategia1)
                         .addComponent(radioEstrategia2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane2.addTab("Simulacion", jPanel1);
 
-        jRadioButton1.setText("FCFS");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        Algoritmos.add(rFCFS);
+        rFCFS.setText("FCFS");
+        rFCFS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                rFCFSActionPerformed(evt);
             }
         });
 
-        jRadioButton2.setText("SCF");
+        Algoritmos.add(rSCF);
+        rSCF.setText("SCF");
+        rSCF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rSCFActionPerformed(evt);
+            }
+        });
 
-        jRadioButton3.setText("Prioridad");
+        Algoritmos.add(rPrioridad);
+        rPrioridad.setText("Prioridad");
+        rPrioridad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rPrioridadActionPerformed(evt);
+            }
+        });
 
-        jRadioButton4.setText("RoundRobin");
+        Algoritmos.add(rRoudRobin);
+        rRoudRobin.setText("RoundRobin");
+        rRoudRobin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rRoudRobinActionPerformed(evt);
+            }
+        });
 
         txtEjecucion.setColumns(20);
         txtEjecucion.setLineWrap(true);
@@ -237,13 +267,13 @@ public  class Home extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jScrollPane2)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
+                        .addComponent(rFCFS)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton2)
+                        .addComponent(rSCF)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton3)
+                        .addComponent(rPrioridad)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton4)))
+                        .addComponent(rRoudRobin)))
                 .addContainerGap(451, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -251,12 +281,12 @@ public  class Home extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton4))
+                    .addComponent(rFCFS)
+                    .addComponent(rSCF)
+                    .addComponent(rPrioridad)
+                    .addComponent(rRoudRobin))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -316,10 +346,35 @@ public  class Home extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(txtSWAP2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtRAM2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(354, Short.MAX_VALUE))
+                .addContainerGap(339, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Reportes", jPanel3);
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Run");
+
+        jMenuItem1.setText("Run Simulacion");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuItem2.setText("Run Procesos");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -346,45 +401,92 @@ public  class Home extends javax.swing.JFrame {
 
     private void radioEstrategia2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioEstrategia2ActionPerformed
         // TODO add your handling code here:
-        if(!"".equals(txtSimulaciom.getText()) )
-        {
-            estrategia = 2;
-            EscribirArchivo(this.txtSimulaciom.getText(),"Simulacion.txt");
-            AnalizarSimulacion("Simulacion.txt");
-        }
+        estrategia = 2;
+  
     }//GEN-LAST:event_radioEstrategia2ActionPerformed
 
     private void radioEstrategia1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioEstrategia1ActionPerformed
         // TODO add your handling code here:
-        if(!"".equals(txtSimulaciom.getText()) )
-        {
-            estrategia = 1;
-            EscribirArchivo(this.txtSimulaciom.getText(),"Simulacion.txt");
-            AnalizarSimulacion("Simulacion.txt");
-        }
+        estrategia = 1;
         
     }//GEN-LAST:event_radioEstrategia1ActionPerformed
 
     private void radioEstrategia3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioEstrategia3ActionPerformed
         // TODO add your handling code here:
+        EscribirArchivo(this.txtSimulaciom.getText(),"Simulacion.txt");
+    }//GEN-LAST:event_radioEstrategia3ActionPerformed
+
+    private void rFCFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rFCFSActionPerformed
+        // TODO add your handling code here:
+        metodo = 1;
+        System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
+        FCFS cola = new FCFS();
+        for (int i = 0; i<procesos.size(); i++)
+        {
+            cola.InsertarEnOrden(procesos.get(i));
+        }
+        Proceso n = cola.getCabeza();
+        
+        while (n!=null)
+        {
+            System.out.println(n.getId()+", "+n.getInicio()+", "+n.getDuracion()+", "+n.getPrioridad());
+            n=n.getSig();
+        }
+        
+        cola.CalcularTiempos();
+        
+    }//GEN-LAST:event_rFCFSActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
         if(!"".equals(txtSimulaciom.getText()) )
         {
-            estrategia = 3;
             EscribirArchivo(this.txtSimulaciom.getText(),"Simulacion.txt");
             AnalizarSimulacion("Simulacion.txt");
         }
-    }//GEN-LAST:event_radioEstrategia3ActionPerformed
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        
         if(!"".equals(txtEjecucion.getText()) )
         {
-            metodo = 1;
             EscribirArchivo(this.txtEjecucion.getText(),"Ejecucion.txt");
             AnalizarEjecucion("Ejecucion.txt");
         }
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void rSCFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSCFActionPerformed
+        // TODO add your handling code here:
+        metodo = 2;
+        System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
+        FCFS cola = new FCFS();
+        for (int i = 0; i<procesos.size(); i++)
+        {
+            cola.InsertarEnOrden(procesos.get(i));
+        }
+        Proceso n = cola.getCabeza();
+        
+        while (n!=null)
+        {
+            System.out.println(n.getId()+", "+n.getInicio()+", "+n.getDuracion()+", "+n.getPrioridad());
+            n=n.getSig();
+        }
+        
+        cola.CalcularTiemposSJF(40);
+
+    }//GEN-LAST:event_rSCFActionPerformed
+
+    private void rPrioridadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rPrioridadActionPerformed
+        // TODO add your handling code here:
+        metodo = 3;
+        System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
+    }//GEN-LAST:event_rPrioridadActionPerformed
+
+    private void rRoudRobinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rRoudRobinActionPerformed
+        // TODO add your handling code here:
+        metodo = 4;
+        System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
+    }//GEN-LAST:event_rRoudRobinActionPerformed
 
     /**
      * @param args the command line arguments
@@ -424,16 +526,21 @@ public  class Home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JRadioButton rFCFS;
+    private javax.swing.JRadioButton rPrioridad;
+    private javax.swing.JRadioButton rRoudRobin;
+    private javax.swing.JRadioButton rSCF;
     private javax.swing.JRadioButton radioEstrategia1;
     private javax.swing.JRadioButton radioEstrategia2;
     private javax.swing.JRadioButton radioEstrategia3;

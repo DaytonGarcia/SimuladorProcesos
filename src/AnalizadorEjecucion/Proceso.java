@@ -15,12 +15,19 @@ public class Proceso {
     private int inicio;
     private int duracion;
     private int prioridad;
+    private Proceso sig, ant;
+    private int tEjecutado;
+    private int estado;
 
     public Proceso(int id, int inicio, int duracion, int prioridad) {
         this.id = id;
         this.inicio = inicio;
         this.duracion = duracion;
         this.prioridad = prioridad;
+        this.sig = null;
+        this.ant = null;
+        this.tEjecutado = 0;
+        this.estado = 0;
     }
 
     public int getPrioridad() {
@@ -54,7 +61,46 @@ public class Proceso {
     public void setDuracion(int duracion) {
         this.duracion = duracion;
     }
+
+    public Proceso getSig() {
+        return sig;
+    }
+
+    public void setSig(Proceso sig) {
+        this.sig = sig;
+    }
+
+    public Proceso getAnt() {
+        return ant;
+    }
+
+    public void setAnt(Proceso ant) {
+        this.ant = ant;
+    }
+
+    public int gettEjecutado() {
+        return tEjecutado;
+    }
+
+    public void settEjecutado(int tEjecutado) {
+        this.tEjecutado = tEjecutado;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
     
+    public void NullAnt(){
+        this.ant = null;
+    }
     
+    public void NullSig()
+    {
+        this.sig = null;
+    }
     
 }
