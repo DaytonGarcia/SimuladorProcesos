@@ -1,0 +1,101 @@
+/*
+ * Universidad de San Carlos de Guatemala
+ * Facultad de Ingenieria
+ * Proyecto de Simulacion de Procesos
+ * Sistemas Operativos 1
+ * Dayton Garcia
+ */
+
+package AnalizadorSimulacion;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+parser code 
+{:
+    public ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+terminal String SIMULACION,RECURSO,TIEMPO,PROCESO,ASIGNAR,LIBERAR,TERMINAR,R;
+terminal String LLAVE_A,LLAVE_C,PAR_A,PAR_C,PUNTOCOMA,COMA;
+terminal String ENTERO;
+
+non terminal S;
+non terminal Declaracion;
+non terminal Time;
+non terminal Process;
+non terminal Cuerpo;
+non terminal LProcesos;
+non terminal Acciones;
+non terminal Accion;
+non terminal PAsignar;
+non terminal PLiberar;
+non terminal PTerminar;
+non terminal LISTA_ID;
+
+start with S; 
+
+S::=SIMULACION LLAVE_A Cuerpo LLAVE_C {:System.out.println("El numero de recursos es: "+parser.recursos.size());:}
+;
+
+Cuerpo ::= Declaracion Cuerpo 
+ | Time Cuerpo 
+ | error Cuerpo 
+ | Declaracion 
+ | Time 
+ | error 
+; 
+
+Declaracion ::= 
+   RECURSO R ENTERO:i PUNTOCOMA {:Recurso n = new Recurso(i);
+                                  parser.recursos.add(n);:}
+;
+
+Time  ::= 
+    TIEMPO PAR_A ENTERO PAR_C LLAVE_A LProcesos LLAVE_C   
+;
+
+LProcesos ::=
+ Process LProcesos 
+|Process 
+;
+
+Process ::=
+PROCESO PAR_A ENTERO PAR_C LLAVE_A Acciones LLAVE_C
+;
+
+Acciones ::= Accion Acciones 
+| Accion 
+;
+
+Accion ::= PAsignar | PLiberar | PTerminar;
+
+PAsignar ::= ASIGNAR PAR_A LISTA_ID PAR_C PUNTOCOMA 
+;
+
+PLiberar ::= LIBERAR PAR_A LISTA_ID PAR_C PUNTOCOMA 
+;
+
+PTerminar ::= TERMINAR PAR_A PAR_C PUNTOCOMA 
+;
+
+LISTA_ID ::= R ENTERO COMA LISTA_ID 
+            |R ENTERO 
+            ;
+

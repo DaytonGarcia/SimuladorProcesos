@@ -1,0 +1,50 @@
+/*
+ * Universidad de San Carlos de Guatemala
+ * Facultad de Ingenieria
+ * Proyecto de Simulacion de Procesos
+ * Sistemas Operativos 1
+ * Dayton Garcia
+ */
+
+package AnalizadorEjecucion;
+import java_cup.runtime.Symbol; 
+
+%% 
+%class Lexico
+%public 
+%line 
+%char 
+%cup 
+%unicode
+%ignorecase
+
+%init{ 
+    yyline = 1; 
+    yychar = 1; 
+%init} 
+
+BLANCOS=[ \r\t]+
+D=[0-9]+
+
+%%
+
+"Ejecucion" {return new Symbol(sym.EJECUCION,yyline,yychar,yytext());}
+"Proceso"   {return new Symbol(sym.PROCESO,yyline,yychar,yytext());} 
+
+"," {return new Symbol(sym.COMA,yyline,yychar, yytext());}
+";" {return new Symbol(sym.PUNTOCOMA,yyline,yychar, yytext());} 
+"(" {return new Symbol(sym.PAR_A,yyline,yychar, yytext());} 
+")" {return new Symbol(sym.PAR_C,yyline,yychar, yytext());} 
+"{" {return new Symbol(sym.LLAVE_A,yyline,yychar, yytext());} 
+"}" {return new Symbol(sym.LLAVE_C,yyline,yychar, yytext());} 
+
+\n {yychar=1;}
+
+{BLANCOS} {} 
+{D} {return new Symbol(sym.ENTERO,yyline,yychar, yytext());} 
+
+. {
+    System.out.println("Este es un error lexico: "+yytext()+
+    ", en la linea: "+yyline+", en la columna: "+yychar);
+}
+

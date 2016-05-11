@@ -1,0 +1,56 @@
+/*
+ * Universidad de San Carlos de Guatemala
+ * Facultad de Ingenieria
+ * Proyecto de Simulacion de Procesos
+ * Sistemas Operativos 1
+ * Dayton Garcia
+ */
+
+package AnalizadorSimulacion;
+import java_cup.runtime.Symbol; 
+
+%% 
+%class Lexico
+%public 
+%line 
+%char 
+%cup 
+%unicode
+%ignorecase
+
+%init{ 
+    yyline = 1; 
+    yychar = 1; 
+%init} 
+BLANCOS=[ \r\t]+
+//ID = [a-z|A-z]([a-z|A-z]|[0-9])+
+D=[0-9]+
+
+%%
+
+"Simulacion" {return new Symbol(sym.SIMULACION,yyline,yychar, yytext());} 
+"Recurso"    {return new Symbol(sym.RECURSO,yyline,yychar, yytext());} 
+"Tiempo"     {return new Symbol(sym.TIEMPO,yyline,yychar, yytext());} 
+"Proceso"    {return new Symbol(sym.PROCESO,yyline,yychar, yytext());} 
+"Asignar"    {return new Symbol(sym.ASIGNAR,yyline,yychar, yytext());}
+"Liberar"    {return new Symbol(sym.LIBERAR,yyline,yychar, yytext());}  
+"Terminar"   {return new Symbol(sym.TERMINAR,yyline,yychar, yytext());} 
+
+"{"          {return new Symbol(sym.LLAVE_A,yyline,yychar, yytext());} 
+"}"          {return new Symbol(sym.LLAVE_C,yyline,yychar, yytext());} 
+"("          {return new Symbol(sym.PAR_A,yyline,yychar, yytext());} 
+")"          {return new Symbol(sym.PAR_C,yyline,yychar, yytext());} 
+";"          {return new Symbol(sym.PUNTOCOMA,yyline,yychar, yytext());} 
+","          {return new Symbol(sym.COMA,yyline,yychar, yytext());}
+"R"          {return new Symbol(sym.R,yyline,yychar, yytext());} 
+
+\n {yychar=1;}
+
+{BLANCOS}    {} 
+{D}          {return new Symbol(sym.ENTERO,yyline,yychar, yytext());}
+
+. {
+    System.out.println("Este es un error lexico: "+yytext()+
+    ", en la linea: "+yyline+", en la columna: "+yychar);
+}
+
