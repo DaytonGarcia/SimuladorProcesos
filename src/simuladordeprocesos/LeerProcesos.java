@@ -15,32 +15,38 @@ import java.util.logging.Logger;
  *
  * @author dayton
  */
-public class Leer extends Thread {
+public class LeerProcesos extends Thread {
     
     public void run()
    {
        while (true){
+           int filas = Home.modelo.getRowCount()-1;
+           if (filas>0)
+           {
+                for (int i = filas; i>=0; i++)
+                {
+                    try{
+                    Home.modelo.removeRow(i);    
+                    }catch(Exception e)
+                    {
+                        
+                    }
+                    
+                }
+           }
          FileReader f = null;
         try {
             // Aquí el código pesado que tarda mucho
             String cadena;
-            f = new FileReader("/proc/meminfo");
+            f = new FileReader("/proc/DEGM");
             try (BufferedReader b = new BufferedReader(f)) {
-                int linea = 0;
+                
                 while((cadena = b.readLine())!=null) {
-                    if (linea==1)
-                    {
-                        int ramLibre = Integer.parseInt(cadena.substring(10).replace("kB", " ").trim());
-                        Home.txtRAM.setText(Integer.toString(ramLibre));
-                        Home.txtRAM2.setText(Double.toString((ramLibre*100/Home.ram)));
-                    }
-                    else if (linea==15)
-                    {
-                        int swapLibre = Integer.parseInt(cadena.substring(10).replace("kB", " ").trim());
-                        Home.txtSWAP.setText(Integer.toString(swapLibre));
-                        Home.txtSWAP2.setText(Double.toString((swapLibre*100/Home.swap)));
-                    }
-                    linea++;
+                    
+                    String vector[] = cadena.split(",");
+                    Nodo n = new Nodo(vector[0], Integer.parseInt(vector[1].trim()),Integer.parseInt(vector[2].trim()));
+                    Home.modelo.addRow(new Object[]{n.getNombre(), n.getpId(), n.getEstado()});
+                    
                 } } catch (IOException ex) {
                Logger.getLogger(Leer.class.getName()).log(Level.SEVERE, null, ex);
            }
@@ -56,7 +62,7 @@ public class Leer extends Thread {
             }
         } 
            try {
-               Thread.sleep(700);
+               Thread.sleep(1000);
            } catch (InterruptedException ex) {
                Logger.getLogger(Leer.class.getName()).log(Level.SEVERE, null, ex);
            }
