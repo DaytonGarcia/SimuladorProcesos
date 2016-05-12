@@ -29,7 +29,14 @@ public  class Home extends javax.swing.JFrame {
     public static int ram, swap;
     public static int estrategia, metodo;
     public static DefaultTableModel modelo;
+    public static FCFS cola = new FCFS();
     private ArrayList<Proceso> procesos = new ArrayList<Proceso>();
+    
+    /*
+    Area de grafico funcion
+    Ancho 421
+    Alto 493
+    */
     
     void AnalizarSimulacion(String path)
     {
@@ -100,6 +107,7 @@ public  class Home extends javax.swing.JFrame {
      */
     public Home() {
         initComponents();
+        Home.lbMetodo.setVisible(false);
         modelo = (DefaultTableModel)Home.TablaProcesos.getModel();
         try {
             CalcularMemoria();
@@ -141,6 +149,8 @@ public  class Home extends javax.swing.JFrame {
         rRoudRobin = new javax.swing.JRadioButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtEjecucion = new javax.swing.JTextArea();
+        AreaDibujo = new javax.swing.JPanel();
+        lbMetodo = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -210,7 +220,7 @@ public  class Home extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(radioEstrategia3))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(346, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,6 +276,22 @@ public  class Home extends javax.swing.JFrame {
         txtEjecucion.setWrapStyleWord(true);
         jScrollPane2.setViewportView(txtEjecucion);
 
+        javax.swing.GroupLayout AreaDibujoLayout = new javax.swing.GroupLayout(AreaDibujo);
+        AreaDibujo.setLayout(AreaDibujoLayout);
+        AreaDibujoLayout.setHorizontalGroup(
+            AreaDibujoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        AreaDibujoLayout.setVerticalGroup(
+            AreaDibujoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 486, Short.MAX_VALUE)
+        );
+
+        lbMetodo.setBackground(java.awt.Color.red);
+        lbMetodo.setFont(new java.awt.Font("Ubuntu", 1, 36)); // NOI18N
+        lbMetodo.setText("METODO");
+        lbMetodo.setOpaque(true);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -282,19 +308,32 @@ public  class Home extends javax.swing.JFrame {
                         .addComponent(rPrioridad)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rRoudRobin)))
-                .addContainerGap(451, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(lbMetodo)
+                        .addContainerGap(170, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(AreaDibujo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rFCFS)
-                    .addComponent(rSCF)
-                    .addComponent(rPrioridad)
-                    .addComponent(rRoudRobin))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rFCFS)
+                            .addComponent(rSCF)
+                            .addComponent(rPrioridad)
+                            .addComponent(rRoudRobin)))
+                    .addComponent(lbMetodo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(AreaDibujo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -453,7 +492,7 @@ public  class Home extends javax.swing.JFrame {
         // TODO add your handling code here:
         metodo = 1;
         System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
-        FCFS cola = new FCFS();
+        cola = new FCFS();
         for (int i = 0; i<procesos.size(); i++)
         {
             cola.InsertarEnOrden(procesos.get(i));
@@ -469,6 +508,12 @@ public  class Home extends javax.swing.JFrame {
         cola.CalcularTiempos();
         cola.InfoProcesos();
         
+        Dibujar nuevo = new Dibujar();
+        nuevo.setBounds(0,0,421,493);
+        nuevo.setOpaque(false);
+        
+        this.AreaDibujo.add(nuevo);
+        this.AreaDibujo.repaint();
     }//GEN-LAST:event_rFCFSActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -555,6 +600,7 @@ public  class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup Algoritmos;
+    private javax.swing.JPanel AreaDibujo;
     private javax.swing.ButtonGroup Estrategias;
     public static javax.swing.JTable TablaProcesos;
     private javax.swing.JLabel jLabel1;
@@ -573,6 +619,7 @@ public  class Home extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane2;
+    public static javax.swing.JLabel lbMetodo;
     private javax.swing.JRadioButton rFCFS;
     private javax.swing.JRadioButton rPrioridad;
     private javax.swing.JRadioButton rRoudRobin;
