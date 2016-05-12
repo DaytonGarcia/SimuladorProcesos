@@ -17,23 +17,20 @@ import java.util.logging.Logger;
  */
 public class LeerProcesos extends Thread {
     
+    public void LimpiarTabla(){
+        try {
+            int filas=Home.TablaProcesos.getRowCount();
+            for (int i = 0;filas>i; i++) {
+                Home.modelo.removeRow(0);
+            }
+        } catch (Exception e) {
+
+        }
+    }
     public void run()
    {
        while (true){
-           int filas = Home.modelo.getRowCount()-1;
-           if (filas>0)
-           {
-                for (int i = filas; i>=0; i++)
-                {
-                    try{
-                    Home.modelo.removeRow(i);    
-                    }catch(Exception e)
-                    {
-                        
-                    }
-                    
-                }
-           }
+           LimpiarTabla();
          FileReader f = null;
         try {
             // Aquí el código pesado que tarda mucho
@@ -45,7 +42,14 @@ public class LeerProcesos extends Thread {
                     
                     String vector[] = cadena.split(",");
                     Nodo n = new Nodo(vector[0], Integer.parseInt(vector[1].trim()),Integer.parseInt(vector[2].trim()));
-                    Home.modelo.addRow(new Object[]{n.getNombre(), n.getpId(), n.getEstado()});
+                    String state;
+                    if (n.getEstado()==0)
+                        state ="running";
+                    else if (n.getEstado()<0)
+                        state = "unrunning";
+                    else
+                        state = "stop";
+                    Home.modelo.addRow(new Object[]{n.getNombre(), n.getpId(), state});
                     
                 } } catch (IOException ex) {
                Logger.getLogger(Leer.class.getName()).log(Level.SEVERE, null, ex);
@@ -62,7 +66,7 @@ public class LeerProcesos extends Thread {
             }
         } 
            try {
-               Thread.sleep(1000);
+               Thread.sleep(1500);
            } catch (InterruptedException ex) {
                Logger.getLogger(Leer.class.getName()).log(Level.SEVERE, null, ex);
            }

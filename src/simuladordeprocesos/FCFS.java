@@ -142,12 +142,13 @@ public class FCFS {
         int tiempo = 0;
         if(cabeza!=null)
         {
-            while(cabeza!=null)
+            Proceso pivote = cabeza;
+            while(pivote!=null)
             {
-                if(cabeza.getInicio()<=tiempo)
+                if(pivote.getInicio()<=tiempo)
                 {
-                    cabeza.setDuracion(cabeza.getDuracion()-1);
-                    Proceso n = cabeza;
+                    pivote.settEjecutado(pivote.gettEjecutado()+1);
+                    Proceso n = pivote;
         
                     System.out.println("\n\nTIEMPO "+tiempo+"\n");
                     while (n!=null)
@@ -155,7 +156,7 @@ public class FCFS {
                         if(n.getInicio()<=tiempo)
                         {
                             System.out.print(n.getId()+", "+n.getInicio()+", "+n.getDuracion()+", "+n.getPrioridad()); 
-                            if(n==cabeza)
+                            if(n==pivote)
                                 System.out.print("           Activo\n");
                             else
                                 System.out.print("           Dormido\n");
@@ -164,9 +165,10 @@ public class FCFS {
                         n=n.getSig();
                     }
                     
-                    if(cabeza.getDuracion()<=0)
+                    if((pivote.getDuracion()-pivote.gettEjecutado())<=0)
                     {
-                        cabeza = cabeza.getSig();
+                        pivote.setInicioReal(tiempo+1-pivote.getDuracion());
+                        pivote = pivote.getSig();
                         //cabeza.setAnt(null);
                     }
                 }
@@ -204,5 +206,19 @@ public class FCFS {
         pivote.settEjecutado(pivote.gettEjecutado()+1);
         
      
+    }
+    
+    public void InfoProcesos()
+    {
+        if(cabeza!=null)
+        {
+            Proceso pivote = cabeza;
+            
+            while(pivote!=null)
+            {
+                System.out.println("Proceso: "+pivote.getId()+", Inicio: "+ pivote.getInicio()+", Inicio Real: "+pivote.getInicioReal()+", Duracion: "+pivote.getDuracion());
+                pivote = pivote.getSig();
+            }
+        }
     }
 }

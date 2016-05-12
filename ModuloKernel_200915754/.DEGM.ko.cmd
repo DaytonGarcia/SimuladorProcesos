@@ -1,0 +1,1 @@
+cmd_/home/dayton/ModuloKernel_200915754/DEGM.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/dayton/ModuloKernel_200915754/DEGM.ko /home/dayton/ModuloKernel_200915754/DEGM.o /home/dayton/ModuloKernel_200915754/DEGM.mod.o

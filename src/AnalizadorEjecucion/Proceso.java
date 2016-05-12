@@ -18,6 +18,7 @@ public class Proceso {
     private Proceso sig, ant;
     private int tEjecutado;
     private int estado;
+    private int inicioReal;
 
     public Proceso(int id, int inicio, int duracion, int prioridad) {
         this.id = id;
@@ -28,6 +29,7 @@ public class Proceso {
         this.ant = null;
         this.tEjecutado = 0;
         this.estado = 0;
+        this.inicioReal=0;
     }
 
     public int getPrioridad() {
@@ -101,6 +103,14 @@ public class Proceso {
     public void NullSig()
     {
         this.sig = null;
+    }
+
+    public int getInicioReal() {
+        return inicioReal;
+    }
+
+    public void setInicioReal(int inicioReal) {
+        this.inicioReal = inicioReal;
     }
     
 }

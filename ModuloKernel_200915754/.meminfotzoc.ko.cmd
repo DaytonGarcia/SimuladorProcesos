@@ -1,0 +1,1 @@
+cmd_/home/dayton/Descargas/Modulos/Memoria/meminfotzoc.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/dayton/Descargas/Modulos/Memoria/meminfotzoc.ko /home/dayton/Descargas/Modulos/Memoria/meminfotzoc.o /home/dayton/Descargas/Modulos/Memoria/meminfotzoc.mod.o

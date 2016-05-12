@@ -467,6 +467,7 @@ public  class Home extends javax.swing.JFrame {
         }
         
         cola.CalcularTiempos();
+        cola.InfoProcesos();
         
     }//GEN-LAST:event_rFCFSActionPerformed
 
