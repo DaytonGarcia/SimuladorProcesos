@@ -11,6 +11,7 @@ package simuladordeprocesos;
  */
 
 import AnalizadorEjecucion.Proceso;
+import java.util.ArrayList;
 
 public class FCFS {
     
@@ -182,28 +183,235 @@ public class FCFS {
         }
     }
     
-    public void CalcularTiemposSJF(int numero)
+    public void CalcularTiemposSJF()
     {
-        Proceso pivote;
-        Proceso aux;
-        boolean activo=false;
-        int tiempo = cabeza.getInicio();
-        pivote = cabeza;
-        pivote.setEstado(1);
+        ArrayList<Proceso> Listo = new ArrayList<>();
+        int tiempo = 0;
+        Proceso pivote = cabeza;
+        Proceso aux = cabeza;
         
-        aux = cabeza;
-        
-        while(aux != null)
+        while (aux!=null)
         {
-            if(aux.getInicio()<=tiempo && aux.getDuracion()<pivote.getDuracion())
+            if(aux.getEstado()==0)
             {
-                pivote.setEstado(0);
-                aux.setEstado(1);
+                /*
+                Agrego todos los que su tiempo sea menor a la lista de listo
+                y cambio su estado a 1 que es que esta listo
+                */
+                while (pivote!=null)
+                {
+                    if(pivote.getInicio()<=tiempo && pivote.getEstado()==0)
+                    {
+                        pivote.setEstado(1);
+                        Listo.add(pivote);
+                        
+                    }
+                    pivote=pivote.getSig();
+                }
+                
+                /*
+                Tomo el primero de la lista de listo y lo uso como pivote
+                para compararlo con todos los de la lista de listo
+                y elegir al menor
+                */
+
+                if(Listo.size()>0)
+                {
+                    
+                
+                Proceso menor = Listo.get(0);
+
+                for (int i=0; i <= Listo.size()-1; i++)
+                {
+                    if(menor.getDuracion()>Listo.get(i).getDuracion())
+                        menor = Listo.get(i);
+                }
+                
+                /*
+                    Al menor seleccionado le seteo su tiempo de inicio real
+                    Este tiempo es tiempo actual
+                */
+                menor.setInicioReal(tiempo);
+                
+                /*
+                    El tiempo actual nuevo es igual al tiempo mas la duracion del proceso
+                */
+                tiempo = tiempo + menor.getDuracion();
+                /*
+                    Quito el proceso de la lista de listo porque ya se termino
+                */
+                Listo.remove(menor);
+                }
+                else
+                    tiempo++;
+            }
+            
+            if(aux.getEstado()==1)
+            {
+                aux = aux.getSig();
+                
+            }
+            else
+            {
                 pivote = aux;
             }
+            
+                
         }
         
-        pivote.settEjecutado(pivote.gettEjecutado()+1);
+     
+    }
+    
+    public void CalcularTiemposPrioridad()
+    {
+        ArrayList<Proceso> Listo = new ArrayList<>();
+        int tiempo = 0;
+        Proceso pivote = cabeza;
+        Proceso aux = cabeza;
+        
+        while (aux!=null)
+        {
+            if(aux.getEstado()==0)
+            {
+                /*
+                Agrego todos los que su tiempo sea menor a la lista de listo
+                y cambio su estado a 1 que es que esta listo
+                */
+                while (pivote!=null)
+                {
+                    if(pivote.getInicio()<=tiempo && pivote.getEstado()==0)
+                    {
+                        pivote.setEstado(1);
+                        Listo.add(pivote);
+                        
+                    }
+                    pivote=pivote.getSig();
+                }
+                
+                /*
+                Tomo el primero de la lista de listo y lo uso como pivote
+                para compararlo con todos los de la lista de listo
+                y elegir al menor
+                */
+
+                if(Listo.size()>0)
+                {
+                    
+                
+                Proceso menor = Listo.get(0);
+
+                for (int i=0; i <= Listo.size()-1; i++)
+                {
+                    if(menor.getPrioridad()<Listo.get(i).getPrioridad())
+                        menor = Listo.get(i);
+                }
+                
+                /*
+                    Al menor seleccionado le seteo su tiempo de inicio real
+                    Este tiempo es tiempo actual
+                */
+                menor.setInicioReal(tiempo);
+                
+                /*
+                    El tiempo actual nuevo es igual al tiempo mas la duracion del proceso
+                */
+                tiempo = tiempo + menor.getDuracion();
+                /*
+                    Quito el proceso de la lista de listo porque ya se termino
+                */
+                Listo.remove(menor);
+                }
+                else
+                    tiempo++;
+            }
+            
+            if(aux.getEstado()==1)
+            {
+                aux = aux.getSig();
+                
+            }
+            else
+            {
+                pivote = aux;
+            }
+            
+                
+        }
+        
+     
+    }
+    
+    public void CalcularTiemposRR()
+    {
+        ArrayList<Proceso> Listo = new ArrayList<>();
+        int tiempo = 0;
+        Proceso pivote = cabeza;
+        Proceso aux = cabeza;
+        
+        while (aux!=null)
+        {
+            if(aux.getEstado()==0)
+            {
+                /*
+                Agrego todos los que su tiempo sea menor a la lista de listo
+                y cambio su estado a 1 que es que esta listo
+                */
+                while (pivote!=null)
+                {
+                    if(pivote.getInicio()<=tiempo && pivote.getEstado()==0)
+                    {
+                        pivote.setEstado(1);
+                        Listo.add(pivote);
+                        
+                    }
+                    pivote=pivote.getSig();
+                }
+                
+                /*
+                Tomo el primero de la lista de listo y lo uso como pivote
+                para compararlo con todos los de la lista de listo
+                y elegir al menor
+                */
+
+                if(Listo.size()>0)
+                {
+                    
+                
+                Proceso menor = Listo.get(0);
+
+                
+                
+                /*
+                    Al menor seleccionado le seteo su tiempo de inicio real
+                    Este tiempo es tiempo actual
+                */
+                menor.setInicioReal(tiempo);
+                
+                /*
+                    El tiempo actual nuevo es igual al tiempo mas la duracion del proceso
+                */
+                tiempo = tiempo + menor.getDuracion();
+                /*
+                    Quito el proceso de la lista de listo porque ya se termino
+                */
+                Listo.remove(menor);
+                }
+                else
+                    tiempo++;
+            }
+            
+            if(aux.getEstado()==1)
+            {
+                aux = aux.getSig();
+                
+            }
+            else
+            {
+                pivote = aux;
+            }
+            
+                
+        }
         
      
     }

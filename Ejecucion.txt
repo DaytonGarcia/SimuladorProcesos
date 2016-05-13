@@ -1,7 +1,7 @@
 Ejecucion{
-Proceso(2,1,5,1);
 Proceso(1,0,3,1);
+Proceso(3,3,2,3);
+Proceso(2,1,5,4);
+Proceso(5,12,5,1);
 Proceso(4,9,5,1);
-Proceso(3,3,2,1);
-Proceso(6,12,5,1);
 }

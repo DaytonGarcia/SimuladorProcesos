@@ -38,6 +38,15 @@ public  class Home extends javax.swing.JFrame {
     Alto 493
     */
     
+    void CompilarProcesos()
+    {
+        if(!"".equals(txtEjecucion.getText()) )
+        {
+            EscribirArchivo(this.txtEjecucion.getText(),"Ejecucion.txt");
+            AnalizarEjecucion("Ejecucion.txt");
+        }
+
+    }
     void AnalizarSimulacion(String path)
     {
         AnalizadorSimulacion.Sintactico pars;
@@ -371,6 +380,7 @@ public  class Home extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        TablaProcesos.setEnabled(false);
         jScrollPane3.setViewportView(TablaProcesos);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -490,7 +500,7 @@ public  class Home extends javax.swing.JFrame {
 
     private void rFCFSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rFCFSActionPerformed
         // TODO add your handling code here:
-        metodo = 1;
+        CompilarProcesos();
         System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
         cola = new FCFS();
         for (int i = 0; i<procesos.size(); i++)
@@ -535,10 +545,10 @@ public  class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void rSCFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSCFActionPerformed
-        // TODO add your handling code here:
-        metodo = 2;
+        // TODO add your handling code here
+        CompilarProcesos();
         System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
-        FCFS cola = new FCFS();
+        cola = new FCFS();
         for (int i = 0; i<procesos.size(); i++)
         {
             cola.InsertarEnOrden(procesos.get(i));
@@ -551,14 +561,43 @@ public  class Home extends javax.swing.JFrame {
             n=n.getSig();
         }
         
-        cola.CalcularTiemposSJF(40);
-
+        cola.CalcularTiemposSJF();
+        cola.InfoProcesos();
+        
+        Dibujar nuevo = new Dibujar();
+        nuevo.setBounds(0,0,421,493);
+        nuevo.setOpaque(false);
+        
+        this.AreaDibujo.add(nuevo);
+        this.AreaDibujo.repaint();
     }//GEN-LAST:event_rSCFActionPerformed
 
     private void rPrioridadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rPrioridadActionPerformed
         // TODO add your handling code here:
-        metodo = 3;
+        CompilarProcesos();
         System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
+        cola = new FCFS();
+        for (int i = 0; i<procesos.size(); i++)
+        {
+            cola.InsertarEnOrden(procesos.get(i));
+        }
+        Proceso n = cola.getCabeza();
+        
+        while (n!=null)
+        {
+            System.out.println(n.getId()+", "+n.getInicio()+", "+n.getDuracion()+", "+n.getPrioridad());
+            n=n.getSig();
+        }
+        
+        cola.CalcularTiemposPrioridad();
+        cola.InfoProcesos();
+        
+        Dibujar nuevo = new Dibujar();
+        nuevo.setBounds(0,0,421,493);
+        nuevo.setOpaque(false);
+        
+        this.AreaDibujo.add(nuevo);
+        this.AreaDibujo.repaint();
     }//GEN-LAST:event_rPrioridadActionPerformed
 
     private void rRoudRobinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rRoudRobinActionPerformed
