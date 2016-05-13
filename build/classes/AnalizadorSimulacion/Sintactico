@@ -13,6 +13,7 @@ import java.util.ArrayList;
 parser code 
 {:
     public ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+    public ArrayList<Tiempo> tiempos = new ArrayList<Tiempo>();
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
@@ -39,9 +40,9 @@ terminal String ENTERO;
 non terminal S;
 non terminal Declaracion;
 non terminal Time;
-non terminal Process;
+non terminal ProcesoS Process;
 non terminal Cuerpo;
-non terminal LProcesos;
+non terminal ArrayList<ProcesoS> LProcesos;
 non terminal Acciones;
 non terminal Accion;
 non terminal PAsignar;
@@ -68,7 +69,9 @@ Declaracion ::=
 ;
 
 Time  ::= 
-    TIEMPO PAR_A ENTERO PAR_C LLAVE_A LProcesos LLAVE_C   
+    TIEMPO PAR_A ENTERO:i PAR_C LLAVE_A {:
+    Tiempo t = new Tiempo(Integer.parseInt(i.trim());
+:} LProcesos LLAVE_C   
 ;
 
 LProcesos ::=
