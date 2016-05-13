@@ -14,6 +14,7 @@ parser code
 {:
     public ArrayList<Recurso> recursos = new ArrayList<Recurso>();
     public ArrayList<Tiempo> tiempos = new ArrayList<Tiempo>();
+    public int pActual;
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
@@ -48,7 +49,7 @@ non terminal Accion;
 non terminal PAsignar;
 non terminal PLiberar;
 non terminal PTerminar;
-non terminal LISTA_ID;
+non terminal ArrayList<Integer> LISTA_ID;
 
 start with S; 
 
@@ -69,18 +70,74 @@ Declaracion ::=
 ;
 
 Time  ::= 
-    TIEMPO PAR_A ENTERO:i PAR_C LLAVE_A {:
-    Tiempo t = new Tiempo(Integer.parseInt(i.trim());
+    TIEMPO PAR_A ENTERO:ii PAR_C LLAVE_A {:
+    Tiempo t = new Tiempo(Integer.parseInt(ii.trim()));
+    if(parser.tiempos.size()>0)
+    {
+        for (int i=0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
+        {
+            ProcesoS p = new ProcesoS();
+            p.id = parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id;
+            for (int j=0; j<= parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.size(); j++)
+            {
+                Recurso r = new Recurso();
+                r.setId(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getId());
+                r.setEstado(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getEstado());
+                r.setAsigando(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getAsigando());
+                p.recursos.add(r);
+            }
+            t.proceso.add(p);
+        }
+    }
+    parser.tiempos.add(t);
 :} LProcesos LLAVE_C   
 ;
 
 LProcesos ::=
- Process LProcesos 
-|Process 
+ Process:p 
+{:if(parser.tiempos.get(parser.tiempos.size()-1).proceso.size()>0)
+             {
+                int coincidencia = 0;
+                for (int i = 0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
+                {
+                    if(p.id==parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id)
+                    {
+                        coincidencia++;
+                    }
+                }
+                if(coincidencia == 0)
+                    parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
+                
+             }
+             else
+             {
+                parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
+             }
+:}
+LProcesos
+|Process:p {:if(parser.tiempos.get(parser.tiempos.size()-1).proceso.size()>0)
+             {
+                int coincidencia = 0;
+                for (int i = 0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
+                {
+                    if(p.id==parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id)
+                    {
+                        coincidencia++;
+                    }
+                }
+                if(coincidencia == 0)
+                    parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
+                
+             }
+             else
+             {
+                parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
+             }
+:} 
 ;
 
 Process ::=
-PROCESO PAR_A ENTERO PAR_C LLAVE_A Acciones LLAVE_C
+PROCESO PAR_A ENTERO:i PAR_C {:parser.pActual = Integer.parseInt(i.trim());:} LLAVE_A Acciones LLAVE_C
 ;
 
 Acciones ::= Accion Acciones 
@@ -89,16 +146,23 @@ Acciones ::= Accion Acciones
 
 Accion ::= PAsignar | PLiberar | PTerminar;
 
-PAsignar ::= ASIGNAR PAR_A LISTA_ID PAR_C PUNTOCOMA 
+PAsignar ::= ASIGNAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:RESULT = l;:}
 ;
 
-PLiberar ::= LIBERAR PAR_A LISTA_ID PAR_C PUNTOCOMA 
+PLiberar ::= LIBERAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:RESULT = l;:}
 ;
 
 PTerminar ::= TERMINAR PAR_A PAR_C PUNTOCOMA 
 ;
 
-LISTA_ID ::= R ENTERO COMA LISTA_ID 
-            |R ENTERO 
+LISTA_ID ::= R ENTERO:i COMA LISTA_ID:l {:
+                                        l.add(Integer.parseInt(i.trim()));
+                                        RESULT = l;
+                                    :}
+            |R ENTERO:i {:
+                            ArrayList<Integer> l = new ArrayList<Integer>();
+                            l.add(Integer.parseInt(i.trim()));
+                            RESULT = l;
+                        :} 
             ;
 

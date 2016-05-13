@@ -19,6 +19,10 @@ public class ProcesoS {
     ProcesoS(int id){
         this.id = id;
     }
+
+    ProcesoS() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }
