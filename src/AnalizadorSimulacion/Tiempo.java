@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class Tiempo {
     
-    int id;
-    ArrayList<ProcesoS> proceso = new ArrayList<ProcesoS>();
+    public int id;
+    public ArrayList<ProcesoS> proceso = new ArrayList<ProcesoS>();
     
     Tiempo (int id)
     {

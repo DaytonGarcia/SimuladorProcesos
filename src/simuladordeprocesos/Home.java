@@ -16,7 +16,12 @@ import java.util.logging.Logger;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import AnalizadorEjecucion.Proceso;
+import AnalizadorSimulacion.ProcesoS;
+import AnalizadorSimulacion.Recurso;
+import AnalizadorSimulacion.Tiempo;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -30,14 +35,101 @@ public  class Home extends javax.swing.JFrame {
     public static int estrategia, metodo;
     public static DefaultTableModel modelo;
     public static FCFS cola = new FCFS();
+    public int t1,t2,t3,t4;
     private ArrayList<Proceso> procesos = new ArrayList<Proceso>();
+    public ArrayList<Tiempo> tiempos = new ArrayList<Tiempo>();
+    public ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+   
     
     /*
     Area de grafico funcion
     Ancho 421
     Alto 493
     */
-    
+    void GenerarDot1(Tiempo t, String nombre)
+    {
+        System.out.println("Mi tiempo es "+t.id);
+         try
+        {
+            BufferedWriter ficheroSalida = new BufferedWriter(
+                new FileWriter(new File("src/Iconos/"+nombre+".dot")));
+ 
+            ficheroSalida.write("digraph G {\n");
+            
+            ficheroSalida.write("node[shape=box]; ");
+            int c =0;
+            for(Recurso r: recursos)
+            {
+                if(c==0)
+                    ficheroSalida.write("R"+r.getId());
+                else
+                    ficheroSalida.write(",R"+r.getId());
+                c++;
+            }
+            ficheroSalida.write(";\n");    
+            ficheroSalida.write("node[shape=circle]; ");
+            int d =0;
+            for(ProcesoS p:t.proceso)
+            {
+                if(d==0)
+                    ficheroSalida.write("P"+p.id);
+                else
+                    ficheroSalida.write(",P"+p.id);
+                d++;
+            }
+            ficheroSalida.write(";\n\n"); 
+            
+            //Si los recursos en espera son mayor a cero no aplica el modelo 1
+
+            for(ProcesoS p:t.proceso)
+            {
+                int espera = 0;
+                if(p.recursos.size()>0)
+                {
+                    for (int i=0;i<p.recursos.size();i++)
+                    {
+                        if(p.recursos.get(i)!=0)
+                        {
+                            espera++;
+                        }
+                    }
+                }
+                
+                //if(espera==0){
+                if(p.asignados.size()>0)
+                {
+                    for (int i=0;i<p.asignados.size();i++)
+                    {
+                        if(p.asignados.get(i)!=0)
+                        {
+                            ficheroSalida.write("R"+p.asignados.get(i)+"->P"+p.id+";\n");
+                        }
+                    }
+                }
+                
+                if(p.recursos.size()>0)
+                {
+                    for (int i=0;i<p.recursos.size();i++)
+                    {
+                        if(p.recursos.get(i)!=0)
+                        {
+                            ficheroSalida.write("P"+p.id+"->R"+p.recursos.get(i)+";\n");
+                        }
+                    }
+                }//}
+            }
+            ficheroSalida.write("}\n");
+            ficheroSalida.close();
+            Process p = Runtime.getRuntime().exec("dot -Tpng ~/NetBeansProjects/SimuladorDeProcesos/dot1.dot > ~/NetBeansProjects/SimuladorDeProcesos/dot1.png"); 
+            
+        }
+        catch (IOException errorDeFichero)
+        {
+            System.out.println(
+                "Ha habido problemas: " +
+                errorDeFichero.getMessage() );
+        }
+    }
     void CompilarProcesos()
     {
         if(!"".equals(txtEjecucion.getText()) )
@@ -52,7 +144,9 @@ public  class Home extends javax.swing.JFrame {
         AnalizadorSimulacion.Sintactico pars;
         try {
             pars=new AnalizadorSimulacion.Sintactico(new AnalizadorSimulacion.Lexico(new FileInputStream(path)));
-            pars.parse();        
+            pars.parse();
+            tiempos = pars.tiempos;
+            recursos =pars.recursos;
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");
             System.out.println("Causa: "+ex.getCause());
@@ -151,6 +245,8 @@ public  class Home extends javax.swing.JFrame {
         radioEstrategia1 = new javax.swing.JRadioButton();
         radioEstrategia2 = new javax.swing.JRadioButton();
         radioEstrategia3 = new javax.swing.JRadioButton();
+        jButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         rFCFS = new javax.swing.JRadioButton();
         rSCF = new javax.swing.JRadioButton();
@@ -215,6 +311,15 @@ public  class Home extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Tiempos");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Tiempo");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -223,25 +328,36 @@ public  class Home extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(124, 124, 124)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(radioEstrategia1)
                         .addGap(26, 26, 26)
                         .addComponent(radioEstrategia2)
                         .addGap(18, 18, 18)
-                        .addComponent(radioEstrategia3))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(346, Short.MAX_VALUE))
+                        .addComponent(radioEstrategia3)
+                        .addGap(35, 35, 35)
+                        .addComponent(jButton1)))
+                .addContainerGap(173, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(13, 13, 13)
+                .addGap(9, 9, 9)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(radioEstrategia3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(radioEstrategia3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(radioEstrategia1)
                         .addComponent(radioEstrategia2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -489,8 +605,8 @@ public  class Home extends javax.swing.JFrame {
 
     private void radioEstrategia1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioEstrategia1ActionPerformed
         // TODO add your handling code here:
-        estrategia = 1;
-        
+        GenerarDot1(tiempos.get(t1),"t"+t1);
+        t1=1;
     }//GEN-LAST:event_radioEstrategia1ActionPerformed
 
     private void radioEstrategia3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioEstrategia3ActionPerformed
@@ -532,6 +648,12 @@ public  class Home extends javax.swing.JFrame {
         {
             EscribirArchivo(this.txtSimulaciom.getText(),"Simulacion.txt");
             AnalizarSimulacion("Simulacion.txt");
+        }
+        
+        System.out.println("Se han dado de alta "+ tiempos.size() +" Tiempos");
+        for(int i=0; i<tiempos.size();i++)
+        {
+            System.out.println("El tiempo "+tiempos.get(i).id+" y los procesos que tiene son "+tiempos.get(i).proceso.size());
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -606,6 +728,24 @@ public  class Home extends javax.swing.JFrame {
         System.out.println("Hay "+procesos.size()+" Procesos dados de alta");
     }//GEN-LAST:event_rRoudRobinActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        if (t1<tiempos.size())
+        {
+        GenerarDot1(tiempos.get(t1),"t"+t1);
+        this.jLabel5.setText("Tiempo: "+(t1+1));
+        t1++;
+        }
+        else
+        {
+            t1=0;
+            GenerarDot1(tiempos.get(t1),"t"+t1);
+        this.jLabel5.setText("Tiempo: "+(t1+1));
+        t1++;
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -642,10 +782,12 @@ public  class Home extends javax.swing.JFrame {
     private javax.swing.JPanel AreaDibujo;
     private javax.swing.ButtonGroup Estrategias;
     public static javax.swing.JTable TablaProcesos;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

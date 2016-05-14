@@ -20,6 +20,7 @@ public class Recurso {
         this.id = Integer.parseInt(pId);
         this.asigando = 0;
         this.estado=0;
+        
     }
 
     Recurso() {

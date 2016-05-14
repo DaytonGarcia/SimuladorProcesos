@@ -13,15 +13,16 @@ import java.util.ArrayList;
  */
 public class ProcesoS {
     
-    int id;
-    ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+    public int id;
+    public ArrayList<Integer> recursos = new ArrayList<Integer>();
+    public ArrayList<Integer> asignados = new ArrayList<Integer>();
     
     ProcesoS(int id){
         this.id = id;
     }
 
     ProcesoS() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.id = 0;
     }
     
     

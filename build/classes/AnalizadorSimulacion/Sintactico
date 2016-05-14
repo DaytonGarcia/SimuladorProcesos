@@ -14,7 +14,8 @@ parser code
 {:
     public ArrayList<Recurso> recursos = new ArrayList<Recurso>();
     public ArrayList<Tiempo> tiempos = new ArrayList<Tiempo>();
-    public int pActual;
+    public ProcesoS pActual;
+    public Tiempo tActual;
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
@@ -53,7 +54,8 @@ non terminal ArrayList<Integer> LISTA_ID;
 
 start with S; 
 
-S::=SIMULACION LLAVE_A Cuerpo LLAVE_C {:System.out.println("El numero de recursos es: "+parser.recursos.size());:}
+S::=SIMULACION LLAVE_A Cuerpo LLAVE_C {:System.out.println("El numero de recursos es: "+parser.recursos.size());
+                                        System.out.println("El numero de tiempos es: "+parser.tiempos.size());:}
 ;
 
 Cuerpo ::= Declaracion Cuerpo 
@@ -70,74 +72,51 @@ Declaracion ::=
 ;
 
 Time  ::= 
-    TIEMPO PAR_A ENTERO:ii PAR_C LLAVE_A {:
-    Tiempo t = new Tiempo(Integer.parseInt(ii.trim()));
-    if(parser.tiempos.size()>0)
-    {
-        for (int i=0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
-        {
-            ProcesoS p = new ProcesoS();
-            p.id = parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id;
-            for (int j=0; j<= parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.size(); j++)
-            {
-                Recurso r = new Recurso();
-                r.setId(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getId());
-                r.setEstado(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getEstado());
-                r.setAsigando(parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).recursos.get(j).getAsigando());
-                p.recursos.add(r);
-            }
-            t.proceso.add(p);
-        }
-    }
-    parser.tiempos.add(t);
-:} LProcesos LLAVE_C   
+    TIEMPO PAR_A ENTERO:ii {:
+                              Tiempo t = new Tiempo(Integer.parseInt(ii.trim())); // creo el nuevo tiempo
+                              parser.tActual = t; //este nuevo tiempo es el actual
+                              if(parser.tiempos.size()>0) //si no es el primer tiempo debo copiar los procesos del t anterior
+                              {
+                                Tiempo tAnterior = parser.tiempos.get(parser.tiempos.size()-1); //este es el tiempo anterior
+                                int cProcesos = tAnterior.proceso.size(); //numero de procesos en el tiempo anterior
+                                for (int i =0; i<cProcesos; i++)//recorro todos los procesos del tiempo anterior
+                                {
+                                  ProcesoS p = new ProcesoS(); //Creo el nuevo proceso que sera copia de c/proceso de t anterior
+                                  p.id = tAnterior.proceso.get(i).id;
+                                  p.recursos =  tAnterior.proceso.get(i).recursos;
+                                  t.proceso.add(p);
+                                }
+                              }
+                              parser.tiempos.add(t);
+      :} PAR_C LLAVE_A LProcesos LLAVE_C   
 ;
 
 LProcesos ::=
- Process:p 
-{:if(parser.tiempos.get(parser.tiempos.size()-1).proceso.size()>0)
-             {
-                int coincidencia = 0;
-                for (int i = 0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
-                {
-                    if(p.id==parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id)
-                    {
-                        coincidencia++;
-                    }
-                }
-                if(coincidencia == 0)
-                    parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
-                
-             }
-             else
-             {
-                parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
-             }
-:}
-LProcesos
-|Process:p {:if(parser.tiempos.get(parser.tiempos.size()-1).proceso.size()>0)
-             {
-                int coincidencia = 0;
-                for (int i = 0; i<=parser.tiempos.get(parser.tiempos.size()-1).proceso.size(); i++)
-                {
-                    if(p.id==parser.tiempos.get(parser.tiempos.size()-1).proceso.get(i).id)
-                    {
-                        coincidencia++;
-                    }
-                }
-                if(coincidencia == 0)
-                    parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
-                
-             }
-             else
-             {
-                parser.tiempos.get(parser.tiempos.size()-1).proceso.add(p);
-             }
-:} 
+ Process LProcesos
+|Process
 ;
 
 Process ::=
-PROCESO PAR_A ENTERO:i PAR_C {:parser.pActual = Integer.parseInt(i.trim());:} LLAVE_A Acciones LLAVE_C
+PROCESO PAR_A ENTERO:ii {:
+                          //Aca el tiempo actual ya tiene todos los procesos anteriores entonces debo verificar si ya existe en esa lista
+                          int cProcesos = parser.tActual.proceso.size(); //numero de procesos en t actual
+                          int coincidencias = 0; //si hay una coicidencia es decir si el proceso ya existe esta var sera 0
+                          int numP= Integer.parseInt(ii.trim());
+                          for (int i=0; i<cProcesos; i++)
+                          {
+                            if(numP==parser.tActual.proceso.get(i).id) // si son iguales sumo la conicidencia
+                              {
+                                coincidencias++;
+                                parser.pActual = parser.tActual.proceso.get(i); //El p actual es igual a la coicidencia
+                              }
+                          }
+                          if(coincidencias==0)// si no hay coincidencas creo el nuevo proceso
+                          {
+                            parser.pActual = new ProcesoS(numP);
+                            parser.tActual.proceso.add(parser.pActual); //si este proceso no existe en la lista de t lo agrego
+                          }
+
+  :}PAR_C LLAVE_A Acciones LLAVE_C
 ;
 
 Acciones ::= Accion Acciones 
@@ -146,23 +125,116 @@ Acciones ::= Accion Acciones
 
 Accion ::= PAsignar | PLiberar | PTerminar;
 
-PAsignar ::= ASIGNAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:RESULT = l;:}
+PAsignar ::= ASIGNAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:System.out.println("Asignar lista la cantidad de recursos son "+ l.size());
+                                                        int tam = l.size(); //El tamano de la lista de recursos solicitados
+                                                        for (int i=0;i<tam; i++) //Recorrer la lista de recursos solicitados
+                                                        {
+                                                          int solicitado = l.get(i); // el numero del recurso solicitado;
+                                                          //Ahora voy a recorrer la lista donde esta declarados los recursos
+                                                          int cantRecursos = parser.recursos.size(); //Obtengo el tamano
+                                                          for (int j=0;j<cantRecursos; j++)
+                                                          {
+                                                            Recurso n = parser.recursos.get(j);
+                                                            if(solicitado == n.getId()) // si el solicitado es el que esta en la lista
+                                                            {
+                                                              if(n.getEstado() ==1) //El registro esta ocupado
+                                                              {
+                                                                //Si esta ocupado lo agrego a la lista de solicitados
+                                                                parser.pActual.recursos.add(n.getId());
+                                                              }
+                                                              else //Si no esta ocupado lo camibio a ocuapo y lo agrego a la lista de recursos
+                                                              {
+                                                                n.setEstado(1);
+                                                                n.setAsigando(parser.pActual.id);
+                                                                parser.pActual.asignados.add(n.getId());
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+:} 
+
 ;
 
-PLiberar ::= LIBERAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:RESULT = l;:}
+PLiberar ::= LIBERAR PAR_A LISTA_ID:l PAR_C PUNTOCOMA {:System.out.println("Liberar lista la cantidad de recursos son "+ l.size());
+                                                        int act = parser.pActual.id;
+                                                        //Para liberar un recurso debo recorrer 3 listas
+                                                        //La lista de recursos si esta asignado y cambiar el estado
+                                                        
+                                                        int cantRecursos = parser.recursos.size(); //Obtengo el tamano
+                                                          for (int j=0;j<cantRecursos; j++)
+                                                          {
+                                                            Recurso n = parser.recursos.get(j);
+                                                            int tamLista = l.size();
+
+                                                            for(int i=0; i<tamLista; i++)
+                                                            {
+                                                              if(n.getId() == l.get(i)) //si el recurso esta en la lista
+                                                               { n.setAsigando(0); //Limpio la asignacion
+                                                                n.setEstado(0); //lo libero
+                                                              }
+
+                                                            }
+                                                          }
+
+                                                          //El segundo recorrido es recorrer la lista de asignados
+                                                          int tamAsignado = parser.pActual.asignados.size(); //tam lista de asignados
+
+                                                          for (int j =0; j<tamAsignado; j++)
+                                                          {
+                                                            int tamLista = l.size();
+                                                            for(int i=0; i<tamLista; i++)
+                                                            {
+                                                              if(parser.pActual.asignados.get(j) == l.get(i)) //si el recurso esta en la lista
+                                                                parser.pActual.asignados.set(j,0); //remuevo el recurso en este indice
+                                                            }
+                                                          }
+
+                                                          //El siguiente recorrido es similar, es la lista de recursos.
+                                                          
+                                                          int tamRecursos = parser.pActual.recursos.size();
+
+                                                          System.out.println("El proceso actual es "+parser.pActual.id+" y la cant de recursos que tiene es "+parser.pActual.recursos.size());
+                                                           for (int i=0; i <parser.pActual.recursos.size();i++)
+                                                           {
+                                                              
+                                                              for(int nodo:l)
+                                                              {
+                                                                if(nodo==parser.pActual.recursos.get(i))
+                                                                  parser.pActual.recursos.set(i,0);
+                                                              }
+                                                              System.out.println("El recurso es "+parser.pActual.recursos.get(i));
+
+                                                           }
+                                                      :}
 ;
 
-PTerminar ::= TERMINAR PAR_A PAR_C PUNTOCOMA 
+PTerminar ::= TERMINAR PAR_A PAR_C PUNTOCOMA {:
+                                                //Si se termina el proceso debe eliminarse del tiempo
+                                                
+
+                                                int cantRecursos = parser.recursos.size(); //Obtengo el tamano
+                                                          
+                                                          for (int j=0;j<cantRecursos; j++)
+                                                          {
+                                                            Recurso n = parser.recursos.get(j);
+                                                              if(n.getAsigando()==parser.pActual.id)
+                                                              { //si el recurso esta en la lista
+                                                                n.setAsigando(0); //Limpio la asignacion
+                                                                n.setEstado(0); //lo libero
+                                                              }
+                                                          }
+                                                parser.tActual.proceso.remove(parser.pActual);
+        :} 
 ;
 
-LISTA_ID ::= R ENTERO:i COMA LISTA_ID:l {:
-                                        l.add(Integer.parseInt(i.trim()));
-                                        RESULT = l;
-                                    :}
-            |R ENTERO:i {:
-                            ArrayList<Integer> l = new ArrayList<Integer>();
+LISTA_ID ::= LISTA_ID:l COMA R ENTERO:i {:
+                                          l.add(Integer.parseInt(i.trim()));
+                                          RESULT = l;
+
+  :} 
+            |R ENTERO:i  {: ArrayList<Integer> l = new ArrayList<Integer>();
                             l.add(Integer.parseInt(i.trim()));
                             RESULT = l;
-                        :} 
+                              :}
             ;
 

@@ -3,6 +3,10 @@ Simulacion
 	Recurso R1;
 	Recurso R2;
 	Recurso R3;
+	Recurso R4;
+	Recurso R5;
+	Recurso R6;
+
 
 	Tiempo(1)
 	{
@@ -37,12 +41,12 @@ Simulacion
 	{
 		Proceso(3)
 		{
-			Liberar(R3);
+			Liberar(R3,R4);
 		}
 	}
 	Tiempo(5)
 	{
-		Proceso(3)
+		Proceso(4)
 		{
 			Terminar();
 		}
